@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
-import { TrendingUp, DollarSign, Clock, Shield, BarChart3, Plus, Minus, Home as HomeIcon, Percent, ArrowLeft, Check, Sparkles, Calculator, AlertTriangle, PiggyBank } from 'lucide-react';
+import { TrendingUp, DollarSign, Clock, Shield, BarChart3, Plus, Minus, Home as HomeIcon, Percent, ArrowLeft, Check, Sparkles, Calculator, AlertTriangle, PiggyBank, ChevronUp, Download } from 'lucide-react';
 
 interface HomeProps {
   scrollToSection?: string | null;
@@ -853,6 +853,8 @@ export default function Home({ scrollToSection, clearScrollTarget }: HomeProps) 
   const compoundRef = useRef<HTMLDivElement>(null);
   const realestateRef = useRef<HTMLDivElement>(null);
 
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
   useEffect(() => {
     if (scrollToSection) {
       if (scrollToSection === 'compound-calc' && compoundRef.current) {
@@ -862,131 +864,154 @@ export default function Home({ scrollToSection, clearScrollTarget }: HomeProps) 
       }
       if (clearScrollTarget) clearScrollTarget();
     }
-  }, [scrollToSection, clearScrollTarget]);
+}, [scrollToSection, clearScrollTarget]);
 
-return (
-    <div className="min-h-screen bg-white">
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(-10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes gradient {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-        }
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-10px); }
-        }
-        .animate-fadeIn {
-          animation: fadeIn 0.6s ease-out both;
-        }
-        .animate-gradient {
-          background-size: 200% 200%;
-          animation: gradient 3s ease infinite;
-        }
-        .animate-pulse {
-          animation: pulse 2s ease-in-out infinite;
-        }
-        .animate-float {
-          animation: float 3s ease-in-out infinite;
-        }
-      `}</style>
-      <HeroSection />
-      
-      <section className="py-10 md:py-14 bg-gray-50/50">
-        <div className="max-w-6xl mx-auto px-4 space-y-8">
-          <div ref={compoundRef} id="calculator">
-            <CompoundCalculator />
-          </div>
-          
-          <div ref={realestateRef}>
-            <RealEstateCalculator />
-          </div>
-        </div>
-      </section>
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 400) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-      <CompoundExplainer />
-      <InvestmentComparison />
-      <ManagementFees />
-
-      {/* Community Section */}
-      <section className="py-12 md:py-16 bg-gradient-to-br from-gray-50 to-emerald-50/30">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          
-          <div className="mb-8">
-            <img 
-              src="/logo.jpeg" 
-              alt="יאללה השקעות" 
-              className="h-44 md:h-56 w-auto mx-auto hover:scale-105 transition-transform duration-500"
-            />
-          </div>
-
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-6">
-            עוד לא הצטרפת לקהילה של יאללה <span className="text-emerald-600">השקעות</span>?
-          </h2>
-
-          <div className="flex items-center justify-center gap-4 mb-10">
-            <a 
-              href="#" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="group flex items-center gap-3 bg-white hover:bg-blue-50 text-gray-700 hover:text-blue-700 font-bold px-6 py-4 rounded-2xl border-2 border-gray-200 hover:border-blue-300 transition-all duration-300 shadow-sm hover:shadow-md transform hover:-translate-y-1 active:translate-y-0"
-            >
-              <svg className="w-6 h-6 text-blue-600 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-              </svg>
-              <span>פייסבוק</span>
-            </a>
-          </div>
-
-          <div className="text-center mb-8">
-            <span className="text-xs font-bold text-gray-500 uppercase tracking-widest bg-white px-4 py-2 rounded-full border border-gray-200 inline-block hover:bg-gray-50 transition-colors duration-300">
-              מה אומרים עלינו
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white rounded-2xl p-6 border-2 border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-500">
-              <div className="flex items-center gap-1 mb-3 text-amber-400">
-                {'★'.repeat(5)}
-              </div>
-              <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                "האתר הכי שימושי שנתקלתי בו! מחשבון הריבית דריבית פשוט מעולה."
-              </p>
-              <p className="text-sm font-bold text-gray-900">דניאל ל.</p>
-              <p className="text-xs text-gray-400">משקיע מתחיל</p>
+   return (
+    <>
+      <div className="min-h-screen bg-white">
+        <style>{`
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          @keyframes gradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+          }
+          @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+          }
+          @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+          }
+          .animate-fadeIn {
+            animation: fadeIn 0.6s ease-out both;
+          }
+          .animate-gradient {
+            background-size: 200% 200%;
+            animation: gradient 3s ease infinite;
+          }
+          .animate-pulse {
+            animation: pulse 2s ease-in-out infinite;
+          }
+          .animate-float {
+            animation: float 3s ease-in-out infinite;
+          }
+        `}</style>
+        <HeroSection />
+        
+        <section className="py-10 md:py-14 bg-gray-50/50">
+          <div className="max-w-6xl mx-auto px-4 space-y-8">
+            <div ref={compoundRef} id="calculator">
+              <CompoundCalculator />
             </div>
-
-            <div className="bg-white rounded-2xl p-6 border-2 border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-500">
-              <div className="flex items-center gap-1 mb-3 text-amber-400">
-                {'★'.repeat(5)}
-              </div>
-              <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                "ההשוואה בין אפיקי ההשקעה פתחה לי את העיניים. התחלתי להשקיע בזכות האתר."
-              </p>
-              <p className="text-sm font-bold text-gray-900">טלי ק.</p>
-              <p className="text-xs text-gray-400">עצמאית</p>
-            </div>
-
-            <div className="bg-white rounded-2xl p-6 border-2 border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-500">
-              <div className="flex items-center gap-1 mb-3 text-amber-400">
-                {'★'.repeat(5)}
-              </div>
-              <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                "הבנתי כמה דמי ניהול גונבים לי מהחיסכון. התקשרתי לסוכן והורדתי דמי ניהול בחצי!"
-              </p>
-              <p className="text-sm font-bold text-gray-900">אבי מ.</p>
-              <p className="text-xs text-gray-400">שכיר בהייטק</p>
+            
+            <div ref={realestateRef}>
+              <RealEstateCalculator />
             </div>
           </div>
-        </div>
-      </section>
-    </div>
+        </section>
+
+        <CompoundExplainer />
+        <InvestmentComparison />
+        <ManagementFees />
+
+        {/* Community Section */}
+        <section className="py-12 md:py-16 bg-gradient-to-br from-gray-50 to-emerald-50/30">
+          <div className="max-w-4xl mx-auto px-4 text-center">
+            
+            <div className="mb-8">
+              <img 
+                src="/logo.jpeg" 
+                alt="יאללה השקעות" 
+                className="h-44 md:h-56 w-auto mx-auto hover:scale-105 transition-transform duration-500"
+              />
+            </div>
+
+            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-6">
+              עוד לא הצטרפת לקהילה של יאללה <span className="text-emerald-600">השקעות</span>?
+            </h2>
+
+            <div className="flex items-center justify-center gap-4 mb-10">
+              <a 
+                href="#" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="group flex items-center gap-3 bg-white hover:bg-blue-50 text-gray-700 hover:text-blue-700 font-bold px-6 py-4 rounded-2xl border-2 border-gray-200 hover:border-blue-300 transition-all duration-300 shadow-sm hover:shadow-md transform hover:-translate-y-1 active:translate-y-0"
+              >
+                <svg className="w-6 h-6 text-blue-600 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+                <span>פייסבוק</span>
+              </a>
+            </div>
+
+            <div className="text-center mb-8">
+              <span className="text-xs font-bold text-gray-500 uppercase tracking-widest bg-white px-4 py-2 rounded-full border border-gray-200 inline-block hover:bg-gray-50 transition-colors duration-300">
+                מה אומרים עלינו
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-white rounded-2xl p-6 border-2 border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-500">
+                <div className="flex items-center gap-1 mb-3 text-amber-400">
+                  {'★'.repeat(5)}
+                </div>
+                <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                  "האתר הכי שימושי שנתקלתי בו! מחשבון הריבית דריבית פשוט מעולה."
+                </p>
+                <p className="text-sm font-bold text-gray-900">דניאל ל.</p>
+                <p className="text-xs text-gray-400">משקיע מתחיל</p>
+              </div>
+
+              <div className="bg-white rounded-2xl p-6 border-2 border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-500">
+                <div className="flex items-center gap-1 mb-3 text-amber-400">
+                  {'★'.repeat(5)}
+                </div>
+                <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                  "ההשוואה בין אפיקי ההשקעה פתחה לי את העיניים. התחלתי להשקיע בזכות האתר."
+                </p>
+                <p className="text-sm font-bold text-gray-900">טלי ק.</p>
+                <p className="text-xs text-gray-400">עצמאית</p>
+              </div>
+
+              <div className="bg-white rounded-2xl p-6 border-2 border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-500">
+                <div className="flex items-center gap-1 mb-3 text-amber-400">
+                  {'★'.repeat(5)}
+                </div>
+                <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                  "הבנתי כמה דמי ניהול גונבים לי מהחיסכון. התקשרתי לסוכן והורדתי דמי ניהול בחצי!"
+                </p>
+                <p className="text-sm font-bold text-gray-900">אבי מ.</p>
+                <p className="text-xs text-gray-400">שכיר בהייטק</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {showScrollTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="fixed bottom-6 left-6 z-50 bg-emerald-600 hover:bg-emerald-700 text-white p-3 rounded-2xl shadow-lg transition-all"
+        >
+          <ChevronUp size={24} />
+        </button>
+      )}
+    </>
   );
 }

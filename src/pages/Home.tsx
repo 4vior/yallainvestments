@@ -960,6 +960,31 @@ export default function Home({ scrollToSection, clearScrollTarget }: HomeProps) 
               </a>
             </div>
 
+<div className="mb-10">
+  <div className="max-w-xl mx-auto text-center mb-5">
+    <p className="text-gray-500 text-sm leading-relaxed">
+      האתר נולד מתוך אמונה שידע פיננסי בסיסי צריך להיות נגיש לכולם. 
+      משקיע חכם מתחיל בצעד אחד פשוט, והאתר הזה נותן את הצעד הראשון הזה.
+    </p>
+    <p className="text-gray-500 text-sm leading-relaxed mt-2">
+      האתר חינמי לחלוטין. אם הוא עוזר לכם להתנהל טוב יותר עם הכסף שלכם – זה הניצחון של כולנו.
+    </p>
+    <p className="text-gray-400 text-sm mt-2">
+      אם בא לכם לתמוך בפרויקט – 
+    </p>
+  </div>
+  
+  <a 
+    href="#" 
+    target="_blank" 
+    rel="noopener noreferrer"
+    className="group inline-flex items-center gap-2 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-white font-bold px-6 py-3.5 rounded-2xl transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0"
+  >
+    <span className="text-xl">☕</span>
+    <span>תזמינו אותי לקפה</span>
+  </a>
+</div>
+
             <div className="text-center mb-8">
               <span className="text-xs font-bold text-gray-500 uppercase tracking-widest bg-white px-4 py-2 rounded-full border border-gray-200 inline-block hover:bg-gray-50 transition-colors duration-300">
                 מה אומרים עלינו

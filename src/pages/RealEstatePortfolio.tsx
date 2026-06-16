@@ -15,6 +15,58 @@ interface Property {
 const formatCurrency = (val: number) =>
   `₪${val.toLocaleString('he-IL', { maximumFractionDigits: 0 })}`;
 
+// Hero Image Component - Loads instantly with the page
+function HeroImage() {
+  return (
+    <div className="relative w-full h-64 md:h-80 lg:h-96 rounded-3xl overflow-hidden mb-8 bg-gradient-to-r from-blue-600 to-blue-800">
+      {/* Main image - full size with object-cover to fill the frame */}
+      <img 
+        src="/house.jpeg" 
+        alt="תיק נכסי נדל״ן" 
+        className="w-full h-full object-cover"
+        loading="eager"
+        fetchPriority="high"
+        onError={(e) => {
+          const target = e.target as HTMLImageElement;
+          target.style.display = 'none';
+          // Show fallback
+          const parent = target.parentElement;
+          if (parent) {
+            const fallback = document.createElement('div');
+            fallback.className = 'text-white text-center p-8 w-full h-full flex items-center justify-center flex-col';
+            fallback.innerHTML = `
+              <div class="text-6xl mb-4">🏠</div>
+              <h2 class="text-3xl font-bold">תיק נדל"ן</h2>
+              <p class="text-white/70 mt-2">ניהול נכסים מקצועי</p>
+            `;
+            parent.appendChild(fallback);
+          }
+        }}
+      />
+      
+      {/* Overlay for better text readability */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+      
+      {/* Text overlay */}
+      <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 text-white">
+        <div className="max-w-2xl">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="bg-blue-500/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-bold text-blue-200 border border-blue-400/30">
+              🏦 פורטפוליו נדל"ן
+            </div>
+          </div>
+          <h1 className="text-3xl md:text-5xl font-extrabold mb-2 drop-shadow-lg">
+            תיק נכסי הנדל"ן שלי
+          </h1>
+          <p className="text-white/90 text-lg md:text-xl max-w-xl drop-shadow-lg">
+            ניהול, מעקב הוצאות וניתוח תזרים מזומנים שוטף של הנכסים שבבעלותך
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function RealEstatePortfolio() {
   const [properties, setProperties] = useState<Property[]>([]);
 
@@ -83,28 +135,8 @@ export default function RealEstatePortfolio() {
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50/30">
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12">
         
-{/* Header */}
-<div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-center mb-10">
-  <div className="lg:col-span-3">
-    <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 text-sm font-bold px-4 py-2 rounded-2xl mb-4">
-      <Building2 size={16} />
-      פורטפוליו נדל"ן
-    </div>
-    <h1 className="text-3xl md:text-5xl font-black text-gray-900 mb-3">
-      תיק נכסי הנדל"ן שלי
-    </h1>
-    <p className="text-gray-500 text-lg">
-      ניהול, מעקב הוצאות וניתוח תזרים מזומנים שוטף של הנכסים שבבעלותך
-    </p>
-  </div>
-  <div className="lg:col-span-2">
-    <img 
-      src="/house.jpeg" 
-      alt="תיק נכסי נדל״ן" 
-      className="w-full rounded-2xl shadow-lg border border-gray-200 object-cover h-48 md:h-56"
-    />
-  </div>
-</div>
+        {/* Hero Image */}
+        <HeroImage />
 
         {/* Metrics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

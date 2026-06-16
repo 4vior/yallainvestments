@@ -3,6 +3,7 @@ import {
   Wallet, TrendingUp, Home, Car, Shield, Landmark, CreditCard, FileText,
   Plus, Trash2, ArrowUp, ArrowDown, Building2, GraduationCap, PiggyBank,
   Banknote, Wrench, ChevronUp, Calculator, Edit3, ArrowUpDown, Clock,
+  Sparkles, Target, BarChart3, Zap,
 } from 'lucide-react';
 
 interface Asset {
@@ -66,6 +67,58 @@ const colorMap: Record<string, { bg: string; text: string; border: string; light
 function getCategoryInfo(category: string, type: 'asset' | 'liability') {
   const categories = type === 'asset' ? assetCategories : liabilityCategories;
   return categories.find(c => c.value === category);
+}
+
+// Hero Image Component - Loads instantly with the page
+function HeroImage() {
+  return (
+    <div className="relative w-full h-64 md:h-80 lg:h-96 rounded-3xl overflow-hidden mb-8 bg-gradient-to-r from-emerald-700 to-emerald-900">
+      {/* Main image - full size with object-cover to fill the frame */}
+      <img 
+        src="/networth.jpeg" 
+        alt="הון נטו - מעקב פיננסי" 
+        className="w-full h-full object-cover"
+        loading="eager"
+        fetchPriority="high"
+        onError={(e) => {
+          const target = e.target as HTMLImageElement;
+          target.style.display = 'none';
+          // Show fallback
+          const parent = target.parentElement;
+          if (parent) {
+            const fallback = document.createElement('div');
+            fallback.className = 'text-white text-center p-8 w-full h-full flex items-center justify-center flex-col';
+            fallback.innerHTML = `
+              <div class="text-6xl mb-4">📊</div>
+              <h2 class="text-3xl font-bold">הון נטו</h2>
+              <p class="text-white/70 mt-2">ניהול פיננסי חכם</p>
+            `;
+            parent.appendChild(fallback);
+          }
+        }}
+      />
+      
+      {/* Overlay for better text readability */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+      
+      {/* Text overlay */}
+      <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 text-white">
+        <div className="max-w-2xl">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="bg-emerald-500/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-bold text-emerald-200 border border-emerald-400/30">
+              📊 מעקב פיננסי
+            </div>
+          </div>
+          <h1 className="text-3xl md:text-5xl font-extrabold mb-2 drop-shadow-lg">
+            הון נטו
+          </h1>
+          <p className="text-white/90 text-lg md:text-xl max-w-xl drop-shadow-lg">
+            כל הנכסים וההתחייבויות שלכם במקום אחד. תמונה מלאה וברורה של המצב הפיננסי שלכם.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function AddItemForm({ type, onAdd }: { type: 'asset' | 'liability'; onAdd: (item: Asset | Liability) => void }) {
@@ -183,6 +236,18 @@ function NetWorthCard({ assets, liabilities }: { assets: Asset[]; liabilities: L
   const totalLiabilities = liabilities.reduce((s, l) => s + l.value, 0);
   const netWorth = totalAssets - totalLiabilities;
 
+  // Financial health score (simplified)
+  const healthScore = useMemo(() => {
+    if (totalAssets === 0 && totalLiabilities === 0) return 0;
+    if (totalAssets === 0) return 0;
+    const ratio = totalAssets / (totalLiabilities + 1);
+    if (ratio > 3) return 95;
+    if (ratio > 2) return 80;
+    if (ratio > 1.5) return 65;
+    if (ratio > 1) return 50;
+    return 30;
+  }, [totalAssets, totalLiabilities]);
+
   return (
     <div className="bg-gradient-to-br from-white via-gray-50 to-white rounded-3xl p-6 md:p-8 border-2 border-gray-200 shadow-lg mb-8 relative overflow-hidden">
       <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-50/50 rounded-full blur-3xl -mr-20 -mt-20"></div>
@@ -197,6 +262,16 @@ function NetWorthCard({ assets, liabilities }: { assets: Asset[]; liabilities: L
                 הון נטו
               </p>
               <span className="text-xs font-bold text-gray-400 bg-gray-100 px-2 py-1 rounded-lg">Net Worth</span>
+              {healthScore > 0 && (
+                <span className={`text-xs font-bold px-2 py-1 rounded-lg ${
+                  healthScore >= 80 ? 'bg-emerald-100 text-emerald-700' :
+                  healthScore >= 50 ? 'bg-amber-100 text-amber-700' :
+                  'bg-red-100 text-red-700'
+                }`}>
+                  <Target size={12} className="inline ml-1" />
+                  {healthScore}% בריאות פיננסית
+                </span>
+              )}
             </div>
             <p className={`text-5xl md:text-6xl font-black ${netWorth >= 0 ? 'text-gray-900' : 'text-red-600'}`}>
               {formatCurrency(netWorth)}
@@ -204,7 +279,7 @@ function NetWorthCard({ assets, liabilities }: { assets: Asset[]; liabilities: L
           </div>
           
           <div className="flex gap-4">
-            <div className="bg-white rounded-2xl p-4 border-2 border-emerald-100 shadow-sm">
+            <div className="bg-white rounded-2xl p-4 border-2 border-emerald-100 shadow-sm hover:shadow-md transition-all">
               <div className="flex items-center gap-2 mb-1">
                 <div className="w-8 h-8 rounded-xl bg-emerald-100 flex items-center justify-center">
                   <ArrowUp size={16} className="text-emerald-600" />
@@ -214,7 +289,7 @@ function NetWorthCard({ assets, liabilities }: { assets: Asset[]; liabilities: L
               <p className="text-xl font-extrabold text-emerald-700">{formatCurrency(totalAssets)}</p>
             </div>
             
-            <div className="bg-white rounded-2xl p-4 border-2 border-red-100 shadow-sm">
+            <div className="bg-white rounded-2xl p-4 border-2 border-red-100 shadow-sm hover:shadow-md transition-all">
               <div className="flex items-center gap-2 mb-1">
                 <div className="w-8 h-8 rounded-xl bg-red-100 flex items-center justify-center">
                   <ArrowDown size={16} className="text-red-600" />
@@ -276,6 +351,9 @@ function ItemsList({ items, onRemove, type }: { items: Asset[] | Liability[]; on
     ? new Date(Math.max(...items.map(i => i.createdAt.getTime())))
     : null;
 
+  // Count items without values for quick insight
+  const hasItems = items.length > 0;
+
   return (
     <div className="bg-white rounded-2xl border-2 border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300">
       <div className="p-5 border-b-2 border-gray-100 bg-gradient-to-r from-gray-50 to-white">
@@ -291,6 +369,11 @@ function ItemsList({ items, onRemove, type }: { items: Asset[] | Liability[]; on
               </div>
             )}
             {isAsset ? 'נכסים' : 'התחייבויות'}
+            {hasItems && (
+              <span className="text-xs font-bold text-gray-400 bg-gray-100 px-2 py-1 rounded-lg">
+                {items.length} פריטים
+              </span>
+            )}
           </h2>
           
           <div className="flex items-center gap-2">
@@ -441,28 +524,9 @@ export default function NetWorth() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50/30">
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12">
-        {/* Header */}
-        <div className="mb-10">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 text-sm font-bold px-4 py-2 rounded-2xl">
-              <Calculator size={16} />
-              מעקב פיננסי
-            </div>
-            <span className="text-sm font-bold text-gray-400 bg-gray-100 px-3 py-1.5 rounded-xl">
-              Financial Tracking
-            </span>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-3 flex items-center gap-4">
-            הון נטו
-            <span className="text-xl font-bold text-gray-300 bg-gray-50 px-3 py-1 rounded-xl border border-gray-200">
-              Net Worth
-            </span>
-          </h1>
-          <p className="text-gray-500 text-lg max-w-2xl">
-            כל הנכסים וההתחייבויות שלכם במקום אחד. 
-            תמונה מלאה וברורה של המצב הפיננסי שלכם.
-          </p>
-        </div>
+        
+        {/* Hero Image */}
+        <HeroImage />
 
         <NetWorthCard assets={assets} liabilities={liabilities} />
 

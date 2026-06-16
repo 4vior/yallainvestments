@@ -3,7 +3,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   AreaChart, Area, PieChart, Pie, Cell,
 } from 'recharts';
-import { Plus, Trash2, DollarSign, TrendingUp, Calendar, Percent, ChevronUp, Sparkles, ArrowUp, ArrowDown } from 'lucide-react';
+import { Plus, Trash2, DollarSign, TrendingUp, Calendar, Percent, ChevronUp, Sparkles, ArrowUp, ArrowDown, PiggyBank, Shield, Zap } from 'lucide-react';
 
 interface Holding {
   id: string;
@@ -20,6 +20,49 @@ const formatCurrency = (val: number) => `₪${val.toLocaleString('he-IL', { maxi
 const formatPercent = (val: number) => `${val.toFixed(1)}%`;
 
 const COLORS = ['#3B82F6', '#8B5CF6', '#F59E0B', '#10B981', '#EF4444', '#EC4899', '#06B6D4', '#F97316', '#84CC16', '#6366F1'];
+
+// Hero Image Component - Loads instantly with the page
+function HeroImage() {
+  // Using a placeholder image - replace with your actual dividend.jpeg
+  // For production, consider using next/image or a CDN with proper caching headers
+  return (
+    <div className="relative w-full h-64 md:h-80 lg:h-96 rounded-3xl overflow-hidden mb-8 bg-gradient-to-r from-emerald-900 to-blue-900">
+      {/* Background Image - loads immediately with page */}
+      <img 
+        src="/dividends.jpeg" 
+        alt="דיבידנדים - השקעות פאסיביות"
+        className="w-full h-full object-cover"
+        loading="eager" // Forces immediate loading
+        fetchPriority="high" // Prioritizes this image
+        onError={(e) => {
+          // Fallback if image doesn't load
+          const target = e.target as HTMLImageElement;
+          target.style.display = 'none';
+        }}
+      />
+      
+      {/* Overlay for better text readability */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
+      
+      {/* Text overlay */}
+      <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 text-white">
+        <div className="max-w-2xl">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="bg-emerald-500/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-bold text-emerald-300 border border-emerald-500/30">
+
+            </div>
+          </div>
+          <h1 className="text-3xl md:text-5xl font-extrabold mb-2">
+            השקעות דיבידנד
+          </h1>
+          <p className="text-white/90 text-lg md:text-xl max-w-xl">
+            עקבו אחרי ההכנסה הפאסיבית שלכם, נתחו את התשואה וצפו באפקט כדור השלג לאורך זמן
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function AddHoldingForm({ onAdd }: { onAdd: (h: Holding) => void }) {
   const [open, setOpen] = useState(false);
@@ -117,24 +160,73 @@ function MetricsCards({ holdings }: { holdings: Holding[] }) {
   const avgYield = totalValue > 0 ? (annualDividend / totalValue) * 100 : 0;
   const monthlyAvg = annualDividend / 12;
 
+  // Calculate dividend safety score (simplified)
+  const dividendSafety = holdings.length > 0 ? 
+    Math.min(95, 60 + (avgYield < 8 ? 20 : 0) + (holdings.filter(h => h.annualDividend > 0).length / holdings.length * 15)) : 0;
+
   const metrics = [
-    { label: 'שווי תיק', value: formatCurrency(totalValue), icon: DollarSign, color: 'blue', bg: 'bg-blue-50', textColor: 'text-blue-700' },
-    { label: 'הכנסה שנתית מדיבידנדים', value: formatCurrency(annualDividend), icon: TrendingUp, color: 'emerald', bg: 'bg-emerald-50', textColor: 'text-emerald-700' },
-    { label: 'תשואת דיבידנד ממוצעת', value: formatPercent(avgYield), icon: Percent, color: 'purple', bg: 'bg-purple-50', textColor: 'text-purple-700' },
-    { label: 'הכנסה חודשית ממוצעת', value: formatCurrency(monthlyAvg), icon: Calendar, color: 'amber', bg: 'bg-amber-50', textColor: 'text-amber-700' },
+    { 
+      label: 'שווי תיק', 
+      value: formatCurrency(totalValue), 
+      icon: DollarSign, 
+      color: 'blue', 
+      bg: 'bg-blue-50', 
+      textColor: 'text-blue-700',
+      borderColor: 'border-blue-200'
+    },
+    { 
+      label: 'הכנסה שנתית מדיבידנדים', 
+      value: formatCurrency(annualDividend), 
+      icon: TrendingUp, 
+      color: 'emerald', 
+      bg: 'bg-emerald-50', 
+      textColor: 'text-emerald-700',
+      borderColor: 'border-emerald-200'
+    },
+    { 
+      label: 'תשואת דיבידנד ממוצעת', 
+      value: formatPercent(avgYield), 
+      icon: Percent, 
+      color: 'purple', 
+      bg: 'bg-purple-50', 
+      textColor: 'text-purple-700',
+      borderColor: 'border-purple-200'
+    },
+    { 
+      label: 'הכנסה חודשית ממוצעת', 
+      value: formatCurrency(monthlyAvg), 
+      icon: Calendar, 
+      color: 'amber', 
+      bg: 'bg-amber-50', 
+      textColor: 'text-amber-700',
+      borderColor: 'border-amber-200'
+    },
+    { 
+      label: 'בטיחות דיבידנד', 
+      value: `${Math.round(dividendSafety)}%`, 
+      icon: Shield, 
+      color: 'emerald', 
+      bg: 'bg-emerald-50', 
+      textColor: 'text-emerald-700',
+      borderColor: 'border-emerald-200',
+      subtitle: holdings.length > 0 ? 'מבוסס על תשואה ופיזור' : 'אין נתונים'
+    },
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
       {metrics.map((m) => {
         const Icon = m.icon;
         return (
-          <div key={m.label} className="bg-white rounded-2xl p-5 border-2 border-gray-100 shadow-sm hover:shadow-md transition-all">
+          <div key={m.label} className={`bg-white rounded-2xl p-5 border-2 ${m.borderColor} shadow-sm hover:shadow-md transition-all hover:scale-[1.02] cursor-default`}>
             <div className="flex items-center gap-2 mb-3">
               <div className={`w-10 h-10 rounded-xl ${m.bg} flex items-center justify-center`}>
                 <Icon size={18} className={m.textColor} />
               </div>
-              <span className="text-xs font-bold text-gray-500">{m.label}</span>
+              <div>
+                <span className="text-xs font-bold text-gray-500 block">{m.label}</span>
+                {m.subtitle && <span className="text-[10px] text-gray-400">{m.subtitle}</span>}
+              </div>
             </div>
             <p className={`text-2xl font-extrabold ${m.textColor}`}>{m.value}</p>
           </div>
@@ -167,6 +259,9 @@ function DividendCalendar({ holdings }: { holdings: Holding[] }) {
           <Calendar size={18} className="text-amber-600" />
         </div>
         לוח דיבידנדים שנתי משוער
+        <span className="text-xs font-bold text-gray-400 bg-gray-100 px-3 py-1 rounded-full ml-auto">
+          ₪{annualDividend.toLocaleString()} בשנה
+        </span>
       </h2>
       {holdings.length === 0 ? (
         <div className="text-center py-8">
@@ -177,9 +272,9 @@ function DividendCalendar({ holdings }: { holdings: Holding[] }) {
           <div className="grid grid-cols-12 gap-3 mb-6">
             {calendarData.map((d) => (
               <div key={d.month} className="flex flex-col items-center">
-                <div className="w-full bg-gray-100 rounded-xl overflow-hidden h-28 flex flex-col justify-end relative">
+                <div className="w-full bg-gray-100 rounded-xl overflow-hidden h-28 flex flex-col justify-end relative group cursor-pointer">
                   <div
-                    className="bg-gradient-to-t from-amber-400 to-amber-300 rounded-t-lg transition-all hover:from-amber-500 hover:to-amber-400"
+                    className="bg-gradient-to-t from-amber-400 to-amber-300 rounded-t-lg transition-all group-hover:from-amber-500 group-hover:to-amber-400 group-hover:scale-y-105"
                     style={{ height: `${maxAmount > 0 ? (d.amount / maxAmount) * 100 : 0}%` }}
                   />
                   <div className="absolute bottom-1 left-1/2 -translate-x-1/2 text-[10px] font-bold text-gray-700 whitespace-nowrap">
@@ -221,12 +316,15 @@ function SectorAllocation({ holdings }: { holdings: Holding[] }) {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-      <div className="bg-white rounded-2xl p-6 border-2 border-gray-100 shadow-sm">
+      <div className="bg-white rounded-2xl p-6 border-2 border-gray-100 shadow-sm hover:shadow-md transition-all">
         <h2 className="text-lg font-extrabold text-gray-900 mb-4 flex items-center gap-2">
           <div className="w-9 h-9 rounded-xl bg-purple-100 flex items-center justify-center">
             <TrendingUp size={18} className="text-purple-600" />
           </div>
           פיזור סקטוריאלי
+          <span className="text-xs font-bold text-gray-400 bg-gray-100 px-3 py-1 rounded-full ml-auto">
+            {holdings.length} נכסים
+          </span>
         </h2>
         <ResponsiveContainer width="100%" height={250}>
           <PieChart>
@@ -239,7 +337,7 @@ function SectorAllocation({ holdings }: { holdings: Holding[] }) {
           </PieChart>
         </ResponsiveContainer>
       </div>
-      <div className="bg-white rounded-2xl p-6 border-2 border-gray-100 shadow-sm">
+      <div className="bg-white rounded-2xl p-6 border-2 border-gray-100 shadow-sm hover:shadow-md transition-all">
         <h2 className="text-lg font-extrabold text-gray-900 mb-4">פירוט סקטורים</h2>
         <div className="space-y-4">
           {sectorData.map((s, i) => (
@@ -292,11 +390,11 @@ function SnowballChart({ holdings }: { holdings: Holding[] }) {
   if (holdings.length === 0) return null;
 
   return (
-    <div className="bg-white rounded-2xl p-6 border-2 border-gray-100 shadow-sm mb-6">
+    <div className="bg-white rounded-2xl p-6 border-2 border-gray-100 shadow-sm hover:shadow-md transition-all mb-6">
       <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
         <h2 className="text-lg font-extrabold text-gray-900 flex items-center gap-2">
           <div className="w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center">
-            <TrendingUp size={18} className="text-emerald-600" />
+            <PiggyBank size={18} className="text-emerald-600" />
           </div>
           אפקט כדור השלג - פרויקציה ל-30 שנה
         </h2>
@@ -335,9 +433,15 @@ function HoldingsTable({ holdings, onRemove }: { holdings: Holding[]; onRemove: 
   const totalValue = holdings.reduce((s, h) => s + h.currentPrice * h.shares, 0);
 
   return (
-    <div className="bg-white rounded-2xl border-2 border-gray-100 shadow-sm overflow-hidden">
-      <div className="p-5 border-b-2 border-gray-100 bg-gradient-to-r from-gray-50 to-white">
-        <h2 className="text-lg font-extrabold text-gray-900">נכסים בתיק</h2>
+    <div className="bg-white rounded-2xl border-2 border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-all">
+      <div className="p-5 border-b-2 border-gray-100 bg-gradient-to-r from-gray-50 to-white flex items-center justify-between">
+        <h2 className="text-lg font-extrabold text-gray-900 flex items-center gap-2">
+          <Zap size={18} className="text-emerald-500" />
+          נכסים בתיק
+        </h2>
+        <span className="text-sm font-bold text-gray-400">
+          {holdings.length} נכסים · {formatCurrency(totalValue)}
+        </span>
       </div>
       {holdings.length === 0 ? (
         <div className="p-12 text-center">
@@ -418,17 +522,8 @@ export default function Dividends() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50/30">
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 text-sm font-bold px-4 py-2 rounded-2xl mb-4">
-            <DollarSign size={16} />
-            תיק דיבידנדים
-          </div>
-          <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-3">השקעות דיבידנד</h1>
-          <p className="text-gray-500 text-lg max-w-2xl">
-            עקבו אחרי ההכנסה הפאסיבית שלכם, נתחו את התשואה וצפו באפקט כדור השלג לאורך זמן
-          </p>
-        </div>
+        {/* Hero Image - Loads instantly */}
+        <HeroImage />
 
         <MetricsCards holdings={holdings} />
         <AddHoldingForm onAdd={addHolding} />
@@ -445,6 +540,33 @@ export default function Dividends() {
         }
         .animate-fadeIn {
           animation: fadeIn 0.3s ease-out;
+        }
+        
+        /* Additional improvements for better performance */
+        * {
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* Smooth hover transitions */
+        .group:hover .group-hover\\:opacity-100 {
+          opacity: 1 !important;
+        }
+        
+        /* Better scrollbar for tables */
+        .overflow-x-auto::-webkit-scrollbar {
+          height: 6px;
+        }
+        .overflow-x-auto::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 10px;
+        }
+        .overflow-x-auto::-webkit-scrollbar-thumb {
+          background: #d1d5db;
+          border-radius: 10px;
+        }
+        .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+          background: #9ca3af;
         }
       `}</style>
     </div>

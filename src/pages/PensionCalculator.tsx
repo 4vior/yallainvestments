@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
-import { Shield, Info, TrendingUp, BookOpen, Users, PiggyBank, Target, AlertCircle } from 'lucide-react';
+import { Shield, Info, TrendingUp, BookOpen, Users, PiggyBank, Target, AlertCircle, Building2 } from 'lucide-react';
 
 const formatCurrency = (val: number) =>
   `₪${val.toLocaleString('he-IL', { maximumFractionDigits: 0 })}`;
@@ -80,15 +80,33 @@ export default function PensionCalculator() {
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50/50">
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12">
         
-        {/* Header */}
-        <div className="text-center mb-10">
-          <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-3">
-            השוואת מסלולי פנסיה
-          </h1>
-          <p className="text-gray-500 text-lg max-w-2xl mx-auto">
-            הכניסו את הפרמטרים של שתי הצעות וקבלו השוואה מדויקת
-          </p>
-        </div>
+{/* Header with Banner */}
+<div className="relative mb-10 rounded-3xl overflow-hidden shadow-lg">
+  <img 
+    src="/pension2.jpeg" 
+    alt="השוואת קרנות פנסיה" 
+    className="w-full h-64 md:h-80 object-cover"
+  />
+  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+  
+  <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
+    <div className="flex items-center gap-3 mb-4">
+      <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white text-sm font-bold px-4 py-2 rounded-2xl border border-white/20">
+        <Building2 size={16} />
+        תכנון פנסיוני
+      </div>
+      <span className="text-sm font-bold text-white/60 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-white/10">
+        Pension Planning
+      </span>
+    </div>
+    <h1 className="text-4xl md:text-5xl font-black text-white mb-3 drop-shadow-lg">
+      השוואת קרנות פנסיה
+    </h1>
+    <p className="text-white/90 text-lg max-w-2xl drop-shadow-lg">
+      הזינו את הפרמטרים של שתי הצעות וקבלו השוואה מדויקת
+    </p>
+  </div>
+</div>
 
         {/* Info Alert */}
         <div className="max-w-4xl mx-auto mb-8">

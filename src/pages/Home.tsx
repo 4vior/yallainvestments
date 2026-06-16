@@ -633,11 +633,21 @@ function InvestmentComparison() {
     ...calculateReturns(1000, 20, channel.return),
   }));
 
-return (
+  return (
     <section className="py-12 md:py-16 bg-white">
       <div className="max-w-5xl mx-auto px-4">
+        
+        {/* Banner Image - No hover effect */}
+        <div className="mb-10 overflow-hidden px-4 md:px-8">
+          <img 
+            src="/snp.jpeg" 
+            alt="השוואת אפיקי השקעה - S&P 500" 
+            className="w-full h-48 md:h-64 object-contain"
+          />
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-center mb-10">
-          <div className="lg:col-span-3 text-center lg:text-right">
+          <div className="lg:col-span-5 text-center">
             <span className="text-xs font-bold text-gray-500 uppercase tracking-widest bg-gray-50 px-4 py-2 rounded-full border border-gray-200 inline-block hover:bg-gray-100 transition-colors duration-300">
               השוואת אפיקים
             </span>
@@ -650,13 +660,6 @@ return (
             <p className="text-sm text-gray-400 mt-2">
               הפקדה חודשית: ₪1,000 | תקופה: 20 שנה
             </p>
-          </div>
-          <div className="lg:col-span-2">
-            <img 
-              src="/snp.jpeg" 
-              alt="השוואת אפיקי השקעה" 
-              className="w-full rounded-2xl shadow-lg border border-gray-200 object-cover h-48 md:h-56 hover:shadow-xl transition-shadow duration-500"
-            />
           </div>
         </div>
 
